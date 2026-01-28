@@ -39,7 +39,6 @@ export default function BillsPage() {
     return d.toISOString().split("T")[0];
   });
   const [quickRange, setQuickRange] = useState<"today" | "7d" | "30d" | "custom">("7d");
-  const [familyId, setFamilyId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBills();
@@ -61,25 +60,10 @@ export default function BillsPage() {
         return;
       }
 
-      // Get user's family
-      const { data: familyData } = await supabase
-        .from("family_members")
-        .select("family_id")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!familyData) {
-        toast.error("Nenhuma família encontrada");
-        return;
-      }
-
-      setFamilyId(familyData.family_id);
-
       // Fetch bills
       const { data: billsData, error } = await supabase
         .from("bills")
         .select("*")
-        .eq("family_id", familyData.family_id)
         .order("due_date", { ascending: true });
 
       if (error) throw error;

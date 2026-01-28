@@ -38,23 +38,10 @@ export default function DashboardPage() {
         return;
       }
 
-      // Get user's family
-      const { data: familyData } = await supabase
-        .from("family_members")
-        .select("family_id")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!familyData) {
-        toast.error("Nenhuma família encontrada");
-        return;
-      }
-
       // Fetch bills for summary
       const { data: bills } = await supabase
         .from("bills")
         .select("id, amount, due_date, status")
-        .eq("family_id", familyData.family_id)
         .eq("status", "open");
 
       if (bills) {
@@ -95,8 +82,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-800">Bem-vindo!</h1>
-        <p className="text-xl text-gray-600 mt-2">Gerencie seus boletos com facilidade</p>
+        <h1 className="text-4xl font-bold text-gray-800">Dashboard Sena Vip</h1>
+        <p className="text-xl text-gray-600 mt-2">Visão geral dos boletos da empresa</p>
       </div>
 
       {/* Cards de Resumo */}
