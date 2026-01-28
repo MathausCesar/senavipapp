@@ -88,8 +88,8 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">💰</h1>
-          <h2 className="text-3xl font-bold text-gray-800">Boletos</h2>
-          <p className="text-lg text-gray-600 mt-2">Controle compartilhado em família</p>
+          <h2 className="text-3xl font-bold text-gray-800">Sena Vip</h2>
+          <p className="text-lg text-gray-600 mt-2">Sistema de controle de boletos</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -147,7 +147,7 @@ export default function LoginPage() {
 
         <div className="mt-8 pt-6 border-t border-gray-200 text-center">
           <p className="text-gray-600 text-base">
-            👨‍👩‍👧 Crie uma conta para compartilhar boletos com sua família
+            🏢 Acesso exclusivo para funcionários da Sena Vip
           </p>
         </div>
       </Card>

@@ -78,12 +78,8 @@ export default function NewBillPage() {
         return;
       }
 
-      // Garantir que exista uma família para o usuário (cria se não houver)
-      const familyId = await ensureFamily(user.id);
-
       // Create bill
       const { error } = await supabase.from("bills").insert({
-        family_id: familyId,
         provider: formData.provider,
         amount: formData.amount,
         due_date: formData.due_date,
@@ -103,38 +99,6 @@ export default function NewBillPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Cria/obtém família do usuário logado
-  const ensureFamily = async (userId: string): Promise<string> => {
-    // Tenta obter família existente
-    const { data: familyData, error: familyErr } = await supabase
-      .from("family_members")
-      .select("family_id")
-      .eq("user_id", userId)
-      .single();
-
-    if (familyData?.family_id) return familyData.family_id;
-    if (familyErr && familyErr.code !== "PGRST116") throw familyErr; // erro diferente de "no rows"
-
-    // Cria família e membro owner
-    const { data: newFamily, error: createFamErr } = await supabase
-      .from("families")
-      .insert({ owner_id: userId, name: "Minha Família" })
-      .select("id")
-      .single();
-
-    if (createFamErr || !newFamily?.id) {
-      throw createFamErr || new Error("Falha ao criar família");
-    }
-
-    const { error: memberErr } = await supabase
-      .from("family_members")
-      .insert({ family_id: newFamily.id, user_id: userId, role: "owner" });
-
-    if (memberErr) throw memberErr;
-
-    return newFamily.id;
   };
 
   return (
