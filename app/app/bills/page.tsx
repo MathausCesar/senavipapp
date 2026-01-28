@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -25,6 +25,7 @@ type FilterTab = "by_date" | "overdue" | "paid";
 
 export default function BillsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [bills, setBills] = useState<Bill[]>([]);
   const [filteredBills, setFilteredBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,10 +36,29 @@ export default function BillsPage() {
   });
   const [endDate, setEndDate] = useState(() => {
     const d = new Date();
-    d.setDate(d.getDate() + 7);
+    const dayOfWeek = d.getDay();
+    d.setDate(d.getDate() + (7 - dayOfWeek)); // Final da semana
     return d.toISOString().split("T")[0];
   });
-  const [quickRange, setQuickRange] = useState<"today" | "7d" | "30d" | "custom">("7d");
+  const [quickRange, setQuickRange] = useState<"today" | "week" | "month" | "custom">("week");
+
+  // Aplicar filtros da URL ao carregar
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    const range = searchParams.get("range") as "today" | "week" | "month" | "custom" | null;
+    
+    if (tab) {
+      if (tab === "overdue") setActiveTab("overdue");
+      else if (tab === "paid") setActiveTab("paid");
+      else setActiveTab("by_date");
+    }
+    
+    if (range && tab === "by_date") {
+      if (range === "today" || range === "week" || range === "month") {
+        applyQuickRange(range);
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     fetchBills();
@@ -173,13 +193,20 @@ export default function BillsPage() {
     { label: "✅ Pagos", value: "paid" },
   ];
 
-  const applyQuickRange = (range: "today" | "7d" | "30d") => {
+  const applyQuickRange = (range: "today" | "week" | "month") => {
     setQuickRange(range);
     const today = new Date();
     const start = today.toISOString().split("T")[0];
     let end = new Date(today);
-    if (range === "7d") end.setDate(today.getDate() + 7);
-    if (range === "30d") end.setDate(today.getDate() + 30);
+    if (range === "week") {
+      // Final da semana (domingo)
+      const dayOfWeek = today.getDay();
+      end.setDate(today.getDate() + (7 - dayOfWeek));
+    }
+    if (range === "month") {
+      // Final do mês
+      end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    }
     const endIso = end.toISOString().split("T")[0];
     setStartDate(start);
     setEndDate(endIso);
@@ -216,17 +243,17 @@ export default function BillsPage() {
               </Button>
               <Button
                 size="sm"
-                variant={quickRange === "7d" ? "primary" : "secondary"}
-                onClick={() => applyQuickRange("7d")}
+                variant={quickRange === "week" ? "primary" : "secondary"}
+                onClick={() => applyQuickRange("week")}
               >
-                7 dias
+                Esta semana
               </Button>
               <Button
                 size="sm"
-                variant={quickRange === "30d" ? "primary" : "secondary"}
-                onClick={() => applyQuickRange("30d")}
+                variant={quickRange === "month" ? "primary" : "secondary"}
+                onClick={() => applyQuickRange("month")}
               >
-                30 dias
+                Este mês
               </Button>
               <Button
                 size="sm"
