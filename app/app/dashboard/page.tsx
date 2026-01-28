@@ -138,7 +138,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* CRÍTICO: Atrasados */}
         <Card 
-          className="border-l-4 border-red-600 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-l-4 border-red-600 hover:shadow-2xl hover:scale-105 hover:border-red-700 transition-all duration-200 cursor-pointer active:scale-95"
           onClick={() => router.push("/app/bills?tab=overdue")}
         >
           <div className="flex items-start justify-between">
@@ -152,13 +152,14 @@ export default function DashboardPage() {
                 R$ {(summary?.overdue_amount || 0).toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-2">⚠️ Ação urgente necessária</p>
+              <p className="text-xs text-blue-600 font-semibold mt-1">👆 Clique para ver todos</p>
             </div>
           </div>
         </Card>
 
         {/* URGENTE: Vence Hoje */}
         <Card 
-          className="border-l-4 border-orange-500 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-l-4 border-orange-500 hover:shadow-2xl hover:scale-105 hover:border-orange-600 transition-all duration-200 cursor-pointer active:scale-95"
           onClick={() => router.push("/app/bills?tab=date&range=today")}
         >
           <div className="flex items-start justify-between">
@@ -172,13 +173,14 @@ export default function DashboardPage() {
                 R$ {(summary?.today_amount || 0).toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-2">🕐 Pagar até hoje</p>
+              <p className="text-xs text-blue-600 font-semibold mt-1">👆 Clique para ver todos</p>
             </div>
           </div>
         </Card>
 
         {/* ATENÇÃO: Próximos 3 dias */}
         <Card 
-          className="border-l-4 border-yellow-500 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-l-4 border-yellow-500 hover:shadow-2xl hover:scale-105 hover:border-yellow-600 transition-all duration-200 cursor-pointer active:scale-95"
           onClick={() => router.push("/app/bills?tab=date&range=custom")}
         >
           <div className="flex items-start justify-between">
@@ -192,13 +194,14 @@ export default function DashboardPage() {
                 R$ {(summary?.next3days_amount || 0).toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-2">📅 Preparar pagamento</p>
+              <p className="text-xs text-blue-600 font-semibold mt-1">👆 Clique para ver todos</p>
             </div>
           </div>
         </Card>
 
         {/* Visão Semanal */}
         <Card 
-          className="border-l-4 border-blue-500 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-l-4 border-blue-500 hover:shadow-2xl hover:scale-105 hover:border-blue-600 transition-all duration-200 cursor-pointer active:scale-95"
           onClick={() => router.push("/app/bills?tab=date&range=week")}
         >
           <div className="flex items-start justify-between">
@@ -212,13 +215,14 @@ export default function DashboardPage() {
                 R$ {(summary?.week_amount || 0).toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-2">📊 Planejamento semanal</p>
+              <p className="text-xs text-blue-600 font-semibold mt-1">👆 Clique para ver todos</p>
             </div>
           </div>
         </Card>
 
         {/* Visão Mensal - Pendente */}
         <Card 
-          className="border-l-4 border-purple-500 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-l-4 border-purple-500 hover:shadow-2xl hover:scale-105 hover:border-purple-600 transition-all duration-200 cursor-pointer active:scale-95"
           onClick={() => router.push("/app/bills?tab=date&range=month")}
         >
           <div className="flex items-start justify-between">
@@ -232,13 +236,14 @@ export default function DashboardPage() {
                 R$ {(summary?.month_pending_amount || 0).toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-2">💳 Total a pagar</p>
+              <p className="text-xs text-blue-600 font-semibold mt-1">👆 Clique para ver todos</p>
             </div>
           </div>
         </Card>
 
         {/* Saúde Financeira - Pagos */}
         <Card 
-          className="border-l-4 border-green-500 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-l-4 border-green-500 hover:shadow-2xl hover:scale-105 hover:border-green-600 transition-all duration-200 cursor-pointer active:scale-95"
           onClick={() => router.push("/app/bills?tab=paid")}
         >
           <div className="flex items-start justify-between">
@@ -257,6 +262,7 @@ export default function DashboardPage() {
                   : "📈 0% pagos"
                 }
               </p>
+              <p className="text-xs text-blue-600 font-semibold mt-1">👆 Clique para ver todos</p>
             </div>
           </div>
         </Card>
