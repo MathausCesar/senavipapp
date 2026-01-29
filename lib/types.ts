@@ -6,6 +6,16 @@ export const BillCreateSchema = z.object({
   due_date: z.string().refine((date) => !isNaN(Date.parse(date)), "Data inválida"),
   status: z.enum(["open", "paid"]).default("open"),
   notes: z.string().optional().default(""),
+  // Novos campos para dados bancários
+  linha_digitavel: z.string().optional(),
+  codigo_barras: z.string().optional(),
+  beneficiario: z.string().optional(),
+  banco: z.string().optional(),
+  agencia: z.string().optional(),
+  conta: z.string().optional(),
+  nosso_numero: z.string().optional(),
+  documento: z.string().optional(),
+  valor_original: z.number().optional(),
 });
 
 export type BillFormData = z.infer<typeof BillCreateSchema>;
