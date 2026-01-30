@@ -11,10 +11,8 @@ interface BarcodeReaderProps {
 }
 
 export function BarcodeReader({ onScan, onClose }: BarcodeReaderProps) {
-  const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const stopScanner = async () => {
     if (scannerRef.current) {
@@ -26,12 +24,10 @@ export function BarcodeReader({ onScan, onClose }: BarcodeReaderProps) {
       }
       scannerRef.current = null;
     }
-    setIsScanning(false);
   };
 
   const startScanner = async () => {
     try {
-      setIsScanning(true);
       setError(null);
 
       const scanner = new Html5Qrcode("barcode-reader");
@@ -57,17 +53,16 @@ export function BarcodeReader({ onScan, onClose }: BarcodeReaderProps) {
           onScan(decodedText);
           stopScanner();
         },
-        (errorMessage) => {
+        () => {
           // Erro na leitura (normal durante escaneamento)
           // Não mostramos esses erros ao usuário
         }
       );
-    } catch (err: any) {
+    } catch (err) {
       console.error("Erro ao iniciar scanner:", err);
       setError(
         "Não foi possível acessar a câmera. Verifique as permissões."
       );
-      setIsScanning(false);
     }
   };
 
@@ -77,6 +72,7 @@ export function BarcodeReader({ onScan, onClose }: BarcodeReaderProps) {
     return () => {
       stopScanner();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -99,7 +95,6 @@ export function BarcodeReader({ onScan, onClose }: BarcodeReaderProps) {
 
         <div
           id="barcode-reader"
-          ref={containerRef}
           className="w-full rounded-lg overflow-hidden mb-4"
           style={{ minHeight: "300px" }}
         />

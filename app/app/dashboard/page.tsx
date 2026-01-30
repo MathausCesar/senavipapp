@@ -28,10 +28,6 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<BillSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchSummary();
-  }, []);
-
   const fetchSummary = async () => {
     try {
       setLoading(true);
@@ -122,6 +118,11 @@ export default function DashboardPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return <Loading message="Carregando resumo..." />;

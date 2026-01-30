@@ -26,10 +26,6 @@ export default function EditBillPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    fetchBill();
-  }, []);
-
   const fetchBill = async () => {
     try {
       setLoading(true);
@@ -67,6 +63,11 @@ export default function EditBillPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchBill();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

@@ -64,10 +64,6 @@ export default function BillsPage() {
     fetchBills();
   }, []);
 
-  useEffect(() => {
-    applyFilters();
-  }, [activeTab, startDate, endDate, bills]);
-
   const fetchBills = async () => {
     try {
       setLoading(true);
@@ -119,7 +115,17 @@ export default function BillsPage() {
 
     setFilteredBills(result);
   };
+  
+  useEffect(() => {
+    fetchBills();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(() => {
+    applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, startDate, endDate, bills]);
+  
   const handleTogglePaid = async (billId: string, currentStatus: string) => {
     try {
       const newStatus = currentStatus === "open" ? "paid" : "open";
