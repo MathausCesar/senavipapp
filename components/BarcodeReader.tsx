@@ -16,13 +16,18 @@ export function BarcodeReader({ onScan, onClose }: BarcodeReaderProps) {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    startScanner();
-
-    return () => {
-      stopScanner();
-    };
-  }, []);
+  const stopScanner = async () => {
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop();
+        scannerRef.current.clear();
+      } catch (err) {
+        console.error("Erro ao parar scanner:", err);
+      }
+      scannerRef.current = null;
+    }
+    setIsScanning(false);
+  };
 
   const startScanner = async () => {
     try {
@@ -66,18 +71,13 @@ export function BarcodeReader({ onScan, onClose }: BarcodeReaderProps) {
     }
   };
 
-  const stopScanner = async () => {
-    if (scannerRef.current) {
-      try {
-        await scannerRef.current.stop();
-        scannerRef.current.clear();
-      } catch (err) {
-        console.error("Erro ao parar scanner:", err);
-      }
-      scannerRef.current = null;
-    }
-    setIsScanning(false);
-  };
+  useEffect(() => {
+    startScanner();
+
+    return () => {
+      stopScanner();
+    };
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">

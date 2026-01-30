@@ -44,61 +44,61 @@ export default function DashboardPage() {
         return;
       }
 
-      // Fetch bills for summary
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayStr = today.toISOString().split("T")[0];
+
+      const endOfWeek = new Date(today);
+      const dayOfWeek = today.getDay();
+      endOfWeek.setDate(today.getDate() + (7 - dayOfWeek));
+      const endOfWeekStr = endOfWeek.toISOString().split("T")[0];
+
+      const next3Days = new Date(today);
+      next3Days.setDate(today.getDate() + 3);
+      const next3DaysStr = next3Days.toISOString().split("T")[0];
+
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      const startOfMonthStr = startOfMonth.toISOString().split("T")[0];
+      const endOfMonthStr = endOfMonth.toISOString().split("T")[0];
+
+      // Query otimizada: busca apenas bills em aberto
       const { data: bills } = await supabase
         .from("bills")
         .select("id, amount, due_date, status")
-        .eq("status", "open");
+        .eq("status", "open")
+        .lte("due_date", endOfMonthStr);
+
+      // Buscar boletos pagos do mês atual em query separada
+      const { data: paidBills } = await supabase
+        .from("bills")
+        .select("id, amount")
+        .eq("status", "paid")
+        .gte("due_date", startOfMonthStr)
+        .lte("due_date", endOfMonthStr);
 
       if (bills) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString().split("T")[0];
+
+        const next3Days = new Date(today);
+        next3Days.setDate(today.getDate() + 3);
+        const next3DaysStr = next3Days.toISOString().split("T")[0];
 
         const endOfWeek = new Date(today);
         const dayOfWeek = today.getDay();
         endOfWeek.setDate(today.getDate() + (7 - dayOfWeek));
-        endOfWeek.setHours(23, 59, 59, 999);
+        const endOfWeekStr = endOfWeek.toISOString().split("T")[0];
 
-        const next3Days = new Date(today);
-        next3Days.setDate(today.getDate() + 3);
-        next3Days.setHours(23, 59, 59, 999);
-
-        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        endOfMonth.setHours(23, 59, 59, 999);
+        const endOfMonthStr2 = endOfMonth.toISOString().split("T")[0];
 
-        const overdueBills = bills.filter((b) => {
-          const dueDate = new Date(b.due_date);
-          return dueDate < today;
-        });
-
-        const todayBills = bills.filter((b) => {
-          const dueDate = new Date(b.due_date);
-          return dueDate.toDateString() === today.toDateString();
-        });
-
-        const next3DaysBills = bills.filter((b) => {
-          const dueDate = new Date(b.due_date);
-          return dueDate > today && dueDate <= next3Days;
-        });
-
-        const weekBills = bills.filter((b) => {
-          const dueDate = new Date(b.due_date);
-          return dueDate >= today && dueDate <= endOfWeek;
-        });
-
-        const monthPendingBills = bills.filter((b) => {
-          const dueDate = new Date(b.due_date);
-          return dueDate >= startOfMonth && dueDate <= endOfMonth;
-        });
-
-        // Buscar boletos pagos do mês atual
-        const { data: paidBills } = await supabase
-          .from("bills")
-          .select("*")
-          .eq("status", "paid")
-          .gte("due_date", startOfMonth.toISOString())
-          .lte("due_date", endOfMonth.toISOString());
+        const overdueBills = bills.filter((b) => b.due_date < todayStr);
+        const todayBills = bills.filter((b) => b.due_date === todayStr);
+        const next3DaysBills = bills.filter((b) => b.due_date > todayStr && b.due_date <= next3DaysStr);
+        const weekBills = bills.filter((b) => b.due_date >= todayStr && b.due_date <= endOfWeekStr);
+        const monthPendingBills = bills.filter((b) => b.due_date >= todayStr && b.due_date <= endOfMonthStr2);
 
         setSummary({
           overdue_count: overdueBills.length,

@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Card } from "@/components/Card";
-import { BarcodeReader } from "@/components/BarcodeReader";
 import { BillCreateSchema, BillFormData } from "@/lib/types";
 import { parseBoleto, formatarLinhaDigitavel } from "@/lib/boletoParser";
 import toast from "react-hot-toast";
+
+// Lazy load do BarcodeReader para evitar SSR
+const BarcodeReader = lazy(() =>
+  import("@/components/BarcodeReader").then((mod) => ({ default: mod.BarcodeReader }))
+);
 
 export default function NewBillPage() {
   const router = useRouter();
@@ -173,10 +177,12 @@ export default function NewBillPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {showScanner && (
-        <BarcodeReader
-          onScan={handleBarcodeScanned}
-          onClose={() => setShowScanner(false)}
-        />
+        <Suspense fallback={<div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"><p className="text-white text-xl">Carregando câmera...</p></div>}>
+          <BarcodeReader
+            onScan={handleBarcodeScanned}
+            onClose={() => setShowScanner(false)}
+          />
+        </Suspense>
       )}
 
       <div>
