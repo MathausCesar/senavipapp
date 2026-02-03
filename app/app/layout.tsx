@@ -12,7 +12,6 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -23,7 +22,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
       if (!session) {
         router.push("/login");
       } else {
-        setUser(session.user);
         setLoading(false);
       }
     };
@@ -47,22 +45,22 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-800">💰 Boletos</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header Simplificado */}
+      <header className="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-2xl sticky top-0 z-50 border-b-8 border-yellow-400">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+          <h1 className="text-4xl md:text-5xl font-bold text-white">💰 Sena Vip</h1>
           <button
             onClick={() => supabase.auth.signOut()}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
+            className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-xl transition-all border-4 border-red-800 hover:scale-105 shadow-xl"
           >
-            Sair
+            🚪 Sair
           </button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-6">
+      <main className="w-full">
         {children}
       </main>
     </div>
